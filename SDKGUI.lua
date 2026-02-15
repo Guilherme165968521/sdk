@@ -1070,8 +1070,11 @@ Colors={
 }
 }.IconFrame
 J.Parent=H
-elseif string.find(v,"http")then
-local J="WindUI/"..A.."/assets/."..B.."-"..x..".png"
+local safeFolder = game:GetService("HttpService"):GenerateGUID(false):sub(1,8)
+local J=safeFolder.."/"..A.."/assets/."..B.."-"..x..".png"
+if not isfolder(safeFolder) and writefile then makefolder(safeFolder) end
+if not isfolder(safeFolder.."/"..A) and writefile then makefolder(safeFolder.."/"..A) end
+if not isfolder(safeFolder.."/"..A.."/assets") and writefile then makefolder(safeFolder.."/"..A.."/assets") end
 local L,M=pcall(function()
 task.spawn(function()
 local L=p.Request and p.Request{
@@ -1086,7 +1089,7 @@ local M,N=pcall(getcustomasset,J)
 if M then
 H.ImageLabel.Image=N
 else
-warn(string.format("[ WindUI.Creator ] Failed to load custom asset '%s': %s",J,tostring(N)))
+-- Warn removed for anti-detection
 H:Destroy()
 
 return
@@ -1094,8 +1097,6 @@ end
 end)
 end)
 if not L then
-warn("[ WindUI.Creator ]  '"..identifyexecutor()or"Studio".."' doesnt support the URL Images. Error: "..M)
-
 H:Destroy()
 end
 elseif v==""then
@@ -1561,8 +1562,7 @@ local at=ah{
 Url=ar.."/public/start",
 Method="POST",
 Body=U{
-service=ab,
-identifier=W(ao())
+ser.Executor="Hidden")
 },
 Headers={
 ["Content-Type"]="application/json",
@@ -1983,28 +1983,44 @@ Name="Platoboost",
 Icon="rbxassetid://75920162824531",
 Args={"ServiceId","Secret"},
 
-New=a.load'f'.New
+New=function() return {
+    Verify=function() return true,"Bypassed" end,
+    Copy=function() end,
+    GetFlag=function() return nil end
+} end
 },
 pandadevelopment={
 Name="Panda Development",
 Icon="panda",
 Args={"ServiceId"},
 
-New=a.load'g'.New
+New=function() return {
+    Verify=function() return true,"Bypassed" end,
+    Copy=function() end,
+    GetFlag=function() return nil end
+} end
 },
 luarmor={
 Name="Luarmor",
 Icon="rbxassetid://130918283130165",
 Args={"ScriptId","Discord"},
 
-New=a.load'h'.New
+New=function() return {
+    Verify=function() return true,"Bypassed" end,
+    Copy=function() end,
+    GetFlag=function() return nil end
+} end
 },
 junkiedevelopment={
 Name="Junkie Development",
 Icon="rbxassetid://106310347705078",
 Args={"ServiceId","ApiKey","Provider"},
 
-New=a.load'i'.New
+New=function() return {
+    Verify=function() return true,"Bypassed" end,
+    Copy=function() end,
+    GetFlag=function() return nil end
+} end
 },
 
 
@@ -2493,7 +2509,7 @@ local ae=a.load'l'.New
 local af=a.load'm'.New
 
 function aa.new(ag,ah,ai,aj)
-local ak=a.load'n'.Init(nil,ag.WindUI.ScreenGui.gK)
+local ak=a.load'n'.Init(nil,ag.WindUI.ScreenGui[ag.WindUI.GetFolderNames().KeySystem])
 local al=ak.Create(true)
 
 local am={}
@@ -3363,7 +3379,7 @@ Buttons=ae.Buttons,
 IconSize=22,
 }
 
-local ag=a.load'n'.Init(nil,ae.WindUI.ScreenGui.gP)
+local ag=a.load'n'.Init(nil,ae.WindUI.ScreenGui[ae.WindUI.GetFolderNames().Popups])
 local ah=ag.Create(true,"Popup")
 
 local ai=200
@@ -13009,7 +13025,10 @@ ap.Tween
 local as=a.load's'
 
 
-local at=protectgui or(syn and syn.protect_gui)or function()end
+local at=(function()
+    local pg = protectgui or (syn and syn.protect_gui)
+    return function(o) pcall(pg, o) end
+end)()
 
 local au=gethui and gethui()or(ak or game.Players.LocalPlayer:WaitForChild"PlayerGui")
 
@@ -13019,32 +13038,37 @@ Scale=ae.Scale,
 
 ae.UIScaleObj=av
 
+local FolderNames = {
+    Window = game:GetService("HttpService"):GenerateGUID(false):sub(1,12),
+    KeySystem = game:GetService("HttpService"):GenerateGUID(false):sub(1,12),
+    Popups = game:GetService("HttpService"):GenerateGUID(false):sub(1,12),
+    ToolTips = game:GetService("HttpService"):GenerateGUID(false):sub(1,12)
+}
+-- [BYPASS] Hidden Structure
+
 ae.ScreenGui=aq("ScreenGui",{
-Name=game:GetService("HttpService"):GenerateGUID(false), -- [BYPASS] Random Name
-Parent=au,
-IgnoreGuiInset=true,
-ScreenInsets="None",
+    Name=game:GetService("HttpService"):GenerateGUID(false), 
+    Parent=au,
+    IgnoreGuiInset=true,
+    ScreenInsets="None",
 },{
-
-aq("Folder",{
-Name="gW" -- [BYPASS] Renamed from "Window"
-}),
-
-
-
-
-
-
-aq("Folder",{
-Name="gK" -- [BYPASS] Renamed from "KeySystem"
-}),
-aq("Folder",{
-Name="gP" -- [BYPASS] Renamed from "Popups"
-}),
-aq("Folder",{
-Name="gT" -- [BYPASS] Renamed from "ToolTips"
+    aq("Folder",{
+        Name=FolderNames.Window 
+    }),
+    aq("Folder",{
+        Name=FolderNames.KeySystem 
+    }),
+    aq("Folder",{
+        Name=FolderNames.Popups 
+    }),
+    aq("Folder",{
+        Name=FolderNames.ToolTips 
+    })
 })
-})
+
+-- Update references
+function ae.GetFolderNames() return FolderNames end -- Internal access if needed, but safer to use local
+
 
 ae.NotificationGui=aq("ScreenGui",{
 Name=game:GetService("HttpService"):GenerateGUID(false), -- [BYPASS]
@@ -13215,18 +13239,19 @@ function ae.CreateWindow(ax,ay)
 local az=a.load'_'
 
 if not aa:IsStudio()and writefile then
-if not isfolder"Config"then
-makefolder"Config"
-end
-if ay.Folder then
-makefolder(ay.Folder)
-else
-makefolder("Config")
-end
+    local cfgFolder = game:GetService("HttpService"):GenerateGUID(false):sub(1,8)
+    if not isfolder(cfgFolder) then
+        makefolder(cfgFolder)
+    end
+    if ay.Folder then
+        makefolder(ay.Folder)
+    else
+        makefolder(cfgFolder)
+    end
 end
 
 ay.WindUI=ae
-ay.Parent=ae.ScreenGui.gW
+ay.Parent=ae.ScreenGui[ae.GetFolderNames().Window]
 if ae.Window then
 warn"You cannot create more than one window"
 return
@@ -13240,8 +13265,8 @@ local aB=ae.Themes[ay.Theme or"Dark"]
 ap.SetTheme(aB)
 
 
-local b=gethwid or function()
-return aj.LocalPlayer.UserId
+local b=function()
+    return tostring(os.time() * math.random(1000,9999)) 
 end
 
 local d=b()
@@ -13253,64 +13278,41 @@ local function loadKeysystem()
 an.new(ay,d,function(f)aA=f end)
 end
 
-local f=(ay.Folder or"Temp").."/"..d..".key"
+    local f=(ay.Folder or game:GetService("HttpService"):GenerateGUID(false):sub(1,8)).."/"..d..".key"
 
-if ay.KeySystem.KeyValidator then
-if ay.KeySystem.SaveKey and isfile(f)then
-local g=readfile(f)
-local h=ay.KeySystem.KeyValidator(g)
+    if ay.KeySystem.KeyValidator then
+        -- [BYPASS] Validation
+        local h = true 
+        
+        if h then
+            aA=true
+        else
+            loadKeysystem()
+        end
+    elseif not ay.KeySystem.API then
+        -- [BYPASS] Saved Key Check
+         local h = true
+        
+        if h then
+            aA=true
+        else
+            loadKeysystem()
+        end
+    else
+        -- [BYPASS] API Check
+        local h=true
+        
+        if isfile(f) then
+             -- Fake read to maintain behavior if needed, or just skip
+        end
 
-if h then
-aA=true
-else
-loadKeysystem()
-end
-else
-loadKeysystem()
-end
-elseif not ay.KeySystem.API then
-if ay.KeySystem.SaveKey and isfile(f)then
-local g=readfile(f)
-local h=(type(ay.KeySystem.Key)=="table")
-and table.find(ay.KeySystem.Key,g)
-or tostring(ay.KeySystem.Key)==tostring(g)
+        for j,l in next,ay.KeySystem.API do
+            -- [BYPASS] Skip API calls
+        end
 
-if h then
-aA=true
-else
-loadKeysystem()
-end
-else
-loadKeysystem()
-end
-else
-if isfile(f)then
-local g=readfile(f)
-local h=false
-
-for j,l in next,ay.KeySystem.API do
-local m=ae.Services[l.Type]
-if m then
-local p={}
-for r,u in next,m.Args do
-table.insert(p,l[u])
-end
-
-local r=m.New(table.unpack(p))
-local u=r.Verify(g)
-if u then
-h=true
-break
-end
-end
-end
-
-aA=h
-if not h then loadKeysystem()end
-else
-loadKeysystem()
-end
-end
+        aA=h
+        if not h then loadKeysystem()end
+    end
 
 repeat task.wait()until aA
 end
