@@ -1561,9 +1561,9 @@ if aq+(600)<al()then
 local at=ah{
 Url=ar.."/public/start",
 Method="POST",
-Body=U{
-ser.Executor="Hidden")
-},
+Body=U({
+    ["identifier"]="Hidden"
+}),
 Headers={
 ["Content-Type"]="application/json",
 ["User-Agent"]="Roblox/Exploit"
