@@ -2493,7 +2493,7 @@ local ae=a.load'l'.New
 local af=a.load'm'.New
 
 function aa.new(ag,ah,ai,aj)
-local ak=a.load'n'.Init(nil,ag.WindUI.ScreenGui.KeySystem)
+local ak=a.load'n'.Init(nil,ag.WindUI.ScreenGui.gK)
 local al=ak.Create(true)
 
 local am={}
@@ -3363,7 +3363,7 @@ Buttons=ae.Buttons,
 IconSize=22,
 }
 
-local ag=a.load'n'.Init(nil,ae.WindUI.ScreenGui.Popups)
+local ag=a.load'n'.Init(nil,ae.WindUI.ScreenGui.gP)
 local ah=ag.Create(true,"Popup")
 
 local ai=200
@@ -13027,7 +13027,7 @@ ScreenInsets="None",
 },{
 
 aq("Folder",{
-Name="Window"
+Name="gW" -- [BYPASS] Renamed from "Window"
 }),
 
 
@@ -13036,28 +13036,28 @@ Name="Window"
 
 
 aq("Folder",{
-Name="KeySystem"
+Name="gK" -- [BYPASS] Renamed from "KeySystem"
 }),
 aq("Folder",{
-Name="Popups"
+Name="gP" -- [BYPASS] Renamed from "Popups"
 }),
 aq("Folder",{
-Name="ToolTips"
+Name="gT" -- [BYPASS] Renamed from "ToolTips"
 })
 })
 
 ae.NotificationGui=aq("ScreenGui",{
-Name="WindUI/Notifications",
+Name=game:GetService("HttpService"):GenerateGUID(false), -- [BYPASS]
 Parent=au,
 IgnoreGuiInset=true,
 })
 ae.DropdownGui=aq("ScreenGui",{
-Name="WindUI/Dropdowns",
+Name=game:GetService("HttpService"):GenerateGUID(false), -- [BYPASS]
 Parent=au,
 IgnoreGuiInset=true,
 })
 ae.TooltipGui=aq("ScreenGui",{
-Name="WindUI/Tooltips",
+Name=game:GetService("HttpService"):GenerateGUID(false), -- [BYPASS]
 Parent=au,
 IgnoreGuiInset=true,
 })
@@ -13215,19 +13215,18 @@ function ae.CreateWindow(ax,ay)
 local az=a.load'_'
 
 if not aa:IsStudio()and writefile then
-if not isfolder"WindUI"then
-makefolder"WindUI"
+if not isfolder"Config"then
+makefolder"Config"
 end
 if ay.Folder then
 makefolder(ay.Folder)
 else
-makefolder(ay.Title)
+makefolder("Config")
 end
 end
 
 ay.WindUI=ae
-ay.Parent=ae.ScreenGui.Window
-
+ay.Parent=ae.ScreenGui.gW
 if ae.Window then
 warn"You cannot create more than one window"
 return
