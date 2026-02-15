@@ -1077,9 +1077,15 @@ if not isfolder(safeFolder.."/"..A) and writefile then makefolder(safeFolder.."/
 if not isfolder(safeFolder.."/"..A.."/assets") and writefile then makefolder(safeFolder.."/"..A.."/assets") end
 local L,M=pcall(function()
 task.spawn(function()
+local reqUrl = v
+if not (reqUrl:find("^http") or reqUrl:find("^rbxasset")) then
+    -- Skip invalid URLs to prevent "Unsafe URL" errors
+    return
+end
+
 local L=p.Request and p.Request{
-Url=v,
-Method="GET",
+    Url=reqUrl,
+    Method="GET",
 }.Body or{}
 
 if not d:IsStudio()and writefile then writefile(J,L)end
