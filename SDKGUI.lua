@@ -13020,7 +13020,7 @@ Scale=ae.Scale,
 ae.UIScaleObj=av
 
 ae.ScreenGui=aq("ScreenGui",{
-Name="WindUI",
+Name=game:GetService("HttpService"):GenerateGUID(false), -- [BYPASS] Random Name
 Parent=au,
 IgnoreGuiInset=true,
 ScreenInsets="None",
