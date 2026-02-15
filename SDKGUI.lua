@@ -1083,10 +1083,16 @@ if not (reqUrl:find("^http") or reqUrl:find("^rbxasset")) then
     return
 end
 
-local L=p.Request and p.Request{
-    Url=reqUrl,
-    Method="GET",
-}.Body or{}
+local L = {}
+if type(reqUrl) == "string" and (reqUrl:find("^http") or reqUrl:find("^rbxasset")) then
+    pcall(function()
+        local resp = p.Request and p.Request{
+            Url=reqUrl,
+            Method="GET",
+        }
+        if resp and resp.Body then L = resp.Body end
+    end)
+end
 
 if not d:IsStudio()and writefile then writefile(J,L)end
 
@@ -13277,6 +13283,7 @@ end
 
 local d=b()
 
+--[[ KeySystem Disabled
 if ay.KeySystem then
 aA=false
 
@@ -13322,6 +13329,7 @@ end
 
 repeat task.wait()until aA
 end
+--]]
 
 local f=az(ay)
 
